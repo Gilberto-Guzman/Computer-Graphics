@@ -30,6 +30,17 @@ class App(customtkinter.CTk):
         y = int((screen_height - 580) / 2)
         self.geometry(f"+{x}+{y}")
 
+        # Crear etiqueta "Método DDA"
+        self.label_metodo_dda = customtkinter.CTkLabel(
+            master=self,
+            text="Método DDA",
+            font=customtkinter.CTkFont(size=36, weight="bold"),
+            anchor="w",
+        )
+        self.label_metodo_dda.grid(
+            row=0, column=0, columnspan=2, padx=20, pady=10, sticky="nsew"
+        )
+
         # Crear etiquetas y entradas para X1, X2, Y1, Y2
         self.label_x1 = customtkinter.CTkLabel(
             master=self,
@@ -123,35 +134,45 @@ class App(customtkinter.CTk):
         X2 = float(self.entry_x2.get())
         Y2 = float(self.entry_y2.get())
 
-        # Calcular la pendiente
-        M = round((Y2 - Y1) / (X2 - X1), 2)
+        try:
+            # Calcular la pendiente
+            M = round((Y2 - Y1) / (X2 - X1), 2)
 
-        # Mostrar el valor de la pendiente
-        self.label_resultado_pendiente = customtkinter.CTkLabel(
-            master=self,
-            text=f"Valor de M = {M}",
-            font=customtkinter.CTkFont(size=20, weight="bold"),
-        )
-        self.label_resultado_pendiente.grid(
-            row=6, column=0, columnspan=2, padx=20, pady=0, sticky="nsew"
-        )
+            # Mostrar el valor de la pendiente
+            self.label_resultado_pendiente = customtkinter.CTkLabel(
+                master=self,
+                text=f"Valor de M = {M}",
+                font=customtkinter.CTkFont(size=20, weight="bold"),
+            )
+            self.label_resultado_pendiente.grid(
+                row=6, column=0, columnspan=2, padx=20, pady=0, sticky="nsew"
+            )
 
-        # Determinar la dirección
-        direccion = ""
-        if M == 0:
-            direccion = "Línea horizontal"
-        elif Y1 < Y2:
-            direccion += "De arriba a abajo"
-        elif Y1 > Y2:
-            direccion += "De abajo a arriba"
+            # Determinar la dirección
+            direccion = ""
+            if M == 0:
+                direccion = "Línea horizontal"
+            elif Y1 < Y2:
+                direccion += "De arriba a abajo"
+            elif Y1 > Y2:
+                direccion += "De abajo a arriba"
 
-        direccion += " y "
+            direccion += " y "
 
-        if X1 < X2:
-            direccion += "de izquierda a derecha"
-        elif X1 > X2:
-            direccion += "de derecha a izquierda"
+            if X1 < X2:
+                direccion += "de izquierda a derecha"
+            elif X1 > X2:
+                direccion += "de derecha a izquierda"
 
+        except ZeroDivisionError:
+            self.label_resultado_pendiente = customtkinter.CTkLabel(
+                master=self,
+                text=f"Pendiente Indeterminada (División por cero)",
+                font=customtkinter.CTkFont(size=20, weight="bold"),
+            )
+            self.label_resultado_pendiente.grid(
+                row=6, column=0, columnspan=2, padx=20, pady=0, sticky="nsew"
+            )
         # Mostrar la dirección
         self.label_resultado_direccion = customtkinter.CTkLabel(
             master=self,
