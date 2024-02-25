@@ -134,11 +134,8 @@ class App(customtkinter.CTk):
         X2 = float(self.entry_x2.get())
         Y2 = float(self.entry_y2.get())
 
-        try:
-            # Calcular la pendiente
+        if ((X2 - X1) != 0):
             M = round((Y2 - Y1) / (X2 - X1), 2)
-
-            # Mostrar el valor de la pendiente
             self.label_resultado_pendiente = customtkinter.CTkLabel(
                 master=self,
                 text=f"Valor de M = {M}",
@@ -148,31 +145,56 @@ class App(customtkinter.CTk):
                 row=6, column=0, columnspan=2, padx=20, pady=0, sticky="nsew"
             )
 
-            # Determinar la dirección
-            direccion = ""
-            if M == 0:
-                direccion = "Línea horizontal"
-            elif Y1 < Y2:
-                direccion += "De arriba a abajo"
-            elif Y1 > Y2:
-                direccion += "De abajo a arriba"
+            DX = abs(X1 - X2)
+            DY = abs(Y1 - Y2)
+            Numero_De_Pasos = int(max(DX, DY))
+            Incremento_En_X = DX / Numero_De_Pasos
+            Incremento_En_Y = DY / Numero_De_Pasos
 
-            direccion += " y "
+            X = float(X1)
+            Y = float(Y1)
 
-            if X1 < X2:
-                direccion += "de izquierda a derecha"
-            elif X1 > X2:
-                direccion += "de derecha a izquierda"
-
-        except ZeroDivisionError:
+            # Ajustar el incremento según el signo de la pendiente
+            Incremento_En_X *= 1 if X2 >= X1 else -1
+            Incremento_En_Y *= 1 if Y2 >= Y1 else -1
+        else:
             self.label_resultado_pendiente = customtkinter.CTkLabel(
                 master=self,
-                text=f"Pendiente Indeterminada (División por cero)",
+                text=f"Valor de M = Error",
                 font=customtkinter.CTkFont(size=20, weight="bold"),
             )
             self.label_resultado_pendiente.grid(
                 row=6, column=0, columnspan=2, padx=20, pady=0, sticky="nsew"
             )
+            M = 0
+            DX = 0
+            DY = abs(Y1 - Y2)
+            Numero_De_Pasos = int(max(DX, DY))
+            Incremento_En_X = DX / Numero_De_Pasos
+            Incremento_En_Y = DY / Numero_De_Pasos
+
+            X = float(X1)
+            Y = float(Y1)
+
+            # Ajustar el incremento según el signo de la pendiente
+            Incremento_En_X *= 1 if X2 >= X1 else -1
+            Incremento_En_Y *= 1 if Y2 >= Y1 else -1
+
+        direccion = ""
+        if M == 0:
+            direccion = "Línea horizontal"
+        elif Y1 < Y2:
+            direccion += "De arriba a abajo"
+        elif Y1 > Y2:
+            direccion += "De abajo a arriba"
+
+        direccion += " y "
+
+        if X1 < X2:
+            direccion += "de izquierda a derecha"
+        elif X1 > X2:
+            direccion += "de derecha a izquierda"
+        
         # Mostrar la dirección
         self.label_resultado_direccion = customtkinter.CTkLabel(
             master=self,
@@ -182,19 +204,6 @@ class App(customtkinter.CTk):
         self.label_resultado_direccion.grid(
             row=7, column=0, columnspan=2, padx=20, pady=0, sticky="nsew"
         )
-
-        # Calcular las coordenadas utilizando el algoritmo DDA
-        DX = abs(X1 - X2)
-        DY = abs(Y1 - Y2)
-        Numero_De_Pasos = int(max(DX, DY))
-        Incremento_En_X = DX / Numero_De_Pasos
-        Incremento_En_Y = DY / Numero_De_Pasos
-
-        X = float(X1)
-        Y = float(Y1)
-
-        Incremento_En_X *= 1 if X2 >= X1 else -1
-        Incremento_En_Y *= 1 if Y2 >= Y1 else -1
 
         Coordenadas_En_X = []
         Coordenadas_En_Y = []
